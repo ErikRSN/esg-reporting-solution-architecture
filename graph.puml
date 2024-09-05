@@ -1,0 +1,131 @@
+@startuml
+
+skinparam shadowing false
+skinparam class {
+    BackgroundColor<<UI>> LightSkyBlue
+    BackgroundColor<<Service>> LightGreen
+    BackgroundColor<<Database>> LightCoral
+    BackgroundColor<<External>> LightGoldenrodYellow
+    BackgroundColor<<Library>> LightGray
+    BackgroundColor<<Microservice>> LightCyan
+    ArrowColor DarkGray
+}
+
+package "ESG Reporting Application" {
+
+    ' UI Layer
+    class WebPortal <<UI>> {
+        +UserDashboard()
+        +ReportGeneration()
+        +ComplianceTracker()
+    }
+
+    class MobileApp <<UI>> {
+        +ESGOverview()
+        +RiskAlerts()
+        +DataEntry()
+    }
+
+    ' Backend Services Layer
+    class UserManagementService <<Service>> {
+        +authenticateUser(credentials)
+        +manageUserRoles(user)
+    }
+
+    class ReportingService <<Service>> {
+        +generateReports(data)
+        +exportToPDF(report)
+        +notifyUsers(report)
+    }
+
+    class ESGCalculationService <<Service>> {
+        +calculateCarbonFootprint(data)
+        +evaluateSocialImpact(data)
+        +analyzeGovernancePractices(data)
+    }
+
+    class DataAggregationService <<Service>> {
+        +fetchFinancialData()
+        +integrateESGData()
+    }
+
+    ' Database Layer
+    class UserDatabase <<Database>> {
+        +UserProfile
+        +UserCredentials
+        +UserRoles
+    }
+
+    class ESGDataWarehouse <<Database>> {
+        +ESGMetrics
+        +HistoricalData
+        +RegulatoryCompliance
+    }
+
+    class AuditLogsDatabase <<Database>> {
+        +UserActions
+        +SystemEvents
+    }
+
+    ' External Integrations
+    class FinancialDataAPI <<External>> {
+        +getMarketData(ticker)
+        +getCompanyFinancials(companyId)
+    }
+
+    class ThirdPartyESGProviderAPI <<External>> {
+        +getESGScores(companyId)
+        +getIndustryBenchmarks()
+    }
+
+    class EmailNotificationSystem <<External>> {
+        +sendEmail(to, subject, body)
+    }
+
+    ' Shared Libraries
+    class CommonUtilities <<Library>> {
+        +Logger
+        +ExceptionHandler
+    }
+
+    class ESGAnalyticsLib <<Library>> {
+        +RiskModeling
+        +ImpactAssessment
+    }
+
+    ' Microservices Architecture
+    class ESGDataMicroservice <<Microservice>> {
+        +storeESGData(data)
+        +fetchESGData(criteria)
+    }
+
+    class NotificationMicroservice <<Microservice>> {
+        +queueEmailNotifications()
+        +processAlerts()
+    }
+}
+
+' Connect UI Layer vertically to Backend Services
+WebPortal -down-> UserManagementService : Login, Role Management
+WebPortal -down-> ESGCalculationService : Request Calculations
+WebPortal -down-> ReportingService : Generate Reports
+
+MobileApp -down-> UserManagementService : Authentication
+MobileApp -down-> ReportingService : View Reports
+
+' Connect Backend Services to Databases vertically
+UserManagementService -down-> UserDatabase : CRUD Operations
+ReportingService -down-> ESGDataWarehouse : Fetch Data
+ReportingService -down-> AuditLogsDatabase : Log User Actions
+ESGCalculationService -down-> ESGDataWarehouse : Store Calculations
+
+' Connect Backend Services to External Integrations vertically
+DataAggregationService -down-> FinancialDataAPI : Fetch Financial Data
+DataAggregationService -down-> ThirdPartyESGProviderAPI : Fetch ESG Scores
+ReportingService -down-> EmailNotificationSystem : Notify Users
+
+' Connect Microservices to Shared Libraries vertically
+ESGDataMicroservice ..down..> ESGAnalyticsLib : Uses
+NotificationMicroservice ..down..> CommonUtilities : Uses
+
+@enduml
